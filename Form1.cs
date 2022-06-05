@@ -475,11 +475,36 @@ namespace MQTTnet.GetLockApp.WinForm
                     metaTimeDateTime = UnixTimeStampToDateTime(Convert.ToInt64(metaTime));
                 }
 
+                byte[] data = Convert.FromBase64String(paramsPayload);
+                string decodedPayloadString = Encoding.UTF8.GetString(data);
+
+                string decodedPayloadStringAux = decodedPayloadString.Replace("[", "").Replace("]", "");
+                string[] decodedPayloadArray = decodedPayloadStringAux.Split(",");
+
+                string payloadId = decodedPayloadArray.Length >= 1 ? decodedPayloadArray[0] : null;
+
+                long payloadVolLitersAux;
+                long.TryParse(decodedPayloadArray.Length >= 2 ? decodedPayloadArray[1] : "0", out payloadVolLitersAux);
+                long? payloadVolLiters = decodedPayloadArray.Length >= 2 ? payloadVolLitersAux : null;
+
+                long payloadTempAux;
+                long.TryParse(decodedPayloadArray.Length >= 3 ? decodedPayloadArray[2] : "0", out payloadTempAux);
+                long? payloadTemp = decodedPayloadArray.Length >= 3 ? payloadTempAux : null;
+
+                long payloadBattAux;
+                long.TryParse(decodedPayloadArray.Length >= 4 ? decodedPayloadArray[3] : "0", out payloadBattAux);
+                long? payloadBatt = decodedPayloadArray.Length >= 4 ? payloadBattAux : null;
+
+                long payloadAlarmAux;
+                long.TryParse(decodedPayloadArray.Length >= 5 ? decodedPayloadArray[4] : "0", out payloadAlarmAux);
+                long? payloadAlarm = decodedPayloadArray.Length >= 5 ? payloadAlarmAux : null;
+
+
                 SqlConnection conn = new SqlConnection(@$"Server={ConfigurationManager.AppSettings["sqlServer"]};Database={ConfigurationManager.AppSettings["sqlServerDatabase"]};User Id={ConfigurationManager.AppSettings["sqlServerUser"]};Password={ConfigurationManager.AppSettings["sqlServerPassword"]};");
                 conn.Open();
 
                 //string insert_query = "INSERT INTO message (id_cofre, info_id, info_ip, info_mac, info_json, data_hash, data_tmst_begin, data_tmst_begin_datetime, data_tmst_end, data_tmst_end_datetime, data_user, data_type, data_currency_total, data_currency_bill_2, data_currency_bill_5, data_currency_bill_10, data_currency_bill_20, data_currency_bill_50, data_currency_bill_100, data_currency_bill_200, data_currency_bill_rejected, data_currency_envelope, data_currency_envelope_total, cod_loja, data_currency_bill, data_currency_bill_total, data_sensor) VALUES (@idCofre, @infoId, @infoIp, @infoMac, @infoJson, @dataHash, @dataTmstBegin, @dataTmstBeginDateTime, @dataTmstEnd, @dataTmstEndDateTime, @dataUser, @dataType, @dataCurrencyTotal, @dataCurrencyB2, @dataCurrencyB5, @dataCurrencyB10, @dataCurrencyB20, @dataCurrencyB50, @dataCurrencyB100, @dataCurrencyB200, @dataCurrencyBREJ, @dataCurrencyEnvelope, @dataCurrencyEnvelopeTotal, @codLoja, @dataCurrencyBill, @dataCurrencyBillTotal, @dataSensor)";
-                string insert_query = "INSERT INTO BlueMeteringMessage (BlueMeteringMessageId, ParamsRxTime, ParamsPort, ParamsDuplicate, ParamsRadioGpsTime, ParamsRadioDelay, ParamsRadioDataRate, ParamsRadioModulationBandwidth, ParamsRadioModulationType, ParamsRadioModulationSpreading, ParamsRadioModulationCodeRate, ParamsRadioHardwareStatus, ParamsRadioHardwareChain, ParamsRadioHardwareTmst, ParamsRadioHardwareSnr, ParamsRadioHardwareRssi, ParamsRadioHardwareChannel, ParamsRadioHardwareGpsLat, ParamsRadioHardwareGpsLng, ParamsRadioHardwareGpsAlt, ParamsRadioTime, ParamsRadioFrequency, ParamsRadioSize, ParamsCounterUp, ParamsLoraHeaderClassB, ParamsLoraHeaderConfirmed, ParamsLoraHeaderAdr, ParamsLoraHeaderAck, ParamsLoraHeaderAdrAckReq, ParamsLoraHeaderVersion, ParamsLoraHeaderType, ParamsPayload, ParamsEncryptedPayload, MetaNetwork, MetaPacketHash, MetaApplication, MetaDeviceAddr, MetaTime, MetaDevice, MetaPacketId, MetaGateway, Type, ParamsRxTimeDateTime, ParamsRadioGpsTimeDateTime, ParamsRadioHardwareTmstDateTime, ParamsRadioTimeDateTime, MetaTimeDateTime) VALUES (@BlueMeteringMessageId, @ParamsRxTime, @ParamsPort, @ParamsDuplicate, @ParamsRadioGpsTime, @ParamsRadioDelay, @ParamsRadioDataRate, @ParamsRadioModulationBandwidth, @ParamsRadioModulationType, @ParamsRadioModulationSpreading, @ParamsRadioModulationCodeRate, @ParamsRadioHardwareStatus, @ParamsRadioHardwareChain, @ParamsRadioHardwareTmst, @ParamsRadioHardwareSnr, @ParamsRadioHardwareRssi, @ParamsRadioHardwareChannel, @ParamsRadioHardwareGpsLat, @ParamsRadioHardwareGpsLng, @ParamsRadioHardwareGpsAlt, @ParamsRadioTime, @ParamsRadioFrequency, @ParamsRadioSize, @ParamsCounterUp, @ParamsLoraHeaderClassB, @ParamsLoraHeaderConfirmed, @ParamsLoraHeaderAdr, @ParamsLoraHeaderAck, @ParamsLoraHeaderAdrAckReq, @ParamsLoraHeaderVersion, @ParamsLoraHeaderType, @ParamsPayload, @ParamsEncryptedPayload, @MetaNetwork, @MetaPacketHash, @MetaApplication, @MetaDeviceAddr, @MetaTime, @MetaDevice, @MetaPacketId, @MetaGateway, @Type, @ParamsRxTimeDateTime, @ParamsRadioGpsTimeDateTime, @ParamsRadioHardwareTmstDateTime, @ParamsRadioTimeDateTime, @MetaTimeDateTime)";
+                string insert_query = "INSERT INTO BlueMeteringMessage (BlueMeteringMessageId, ParamsRxTime, ParamsPort, ParamsDuplicate, ParamsRadioGpsTime, ParamsRadioDelay, ParamsRadioDataRate, ParamsRadioModulationBandwidth, ParamsRadioModulationType, ParamsRadioModulationSpreading, ParamsRadioModulationCodeRate, ParamsRadioHardwareStatus, ParamsRadioHardwareChain, ParamsRadioHardwareTmst, ParamsRadioHardwareSnr, ParamsRadioHardwareRssi, ParamsRadioHardwareChannel, ParamsRadioHardwareGpsLat, ParamsRadioHardwareGpsLng, ParamsRadioHardwareGpsAlt, ParamsRadioTime, ParamsRadioFrequency, ParamsRadioSize, ParamsCounterUp, ParamsLoraHeaderClassB, ParamsLoraHeaderConfirmed, ParamsLoraHeaderAdr, ParamsLoraHeaderAck, ParamsLoraHeaderAdrAckReq, ParamsLoraHeaderVersion, ParamsLoraHeaderType, ParamsPayload, ParamsEncryptedPayload, MetaNetwork, MetaPacketHash, MetaApplication, MetaDeviceAddr, MetaTime, MetaDevice, MetaPacketId, MetaGateway, Type, ParamsRxTimeDateTime, ParamsRadioGpsTimeDateTime, ParamsRadioHardwareTmstDateTime, ParamsRadioTimeDateTime, MetaTimeDateTime, PayloadId, PayloadVolLiters, PayloadTemp, PayloadBatt, PayloadAlarm) VALUES (@BlueMeteringMessageId, @ParamsRxTime, @ParamsPort, @ParamsDuplicate, @ParamsRadioGpsTime, @ParamsRadioDelay, @ParamsRadioDataRate, @ParamsRadioModulationBandwidth, @ParamsRadioModulationType, @ParamsRadioModulationSpreading, @ParamsRadioModulationCodeRate, @ParamsRadioHardwareStatus, @ParamsRadioHardwareChain, @ParamsRadioHardwareTmst, @ParamsRadioHardwareSnr, @ParamsRadioHardwareRssi, @ParamsRadioHardwareChannel, @ParamsRadioHardwareGpsLat, @ParamsRadioHardwareGpsLng, @ParamsRadioHardwareGpsAlt, @ParamsRadioTime, @ParamsRadioFrequency, @ParamsRadioSize, @ParamsCounterUp, @ParamsLoraHeaderClassB, @ParamsLoraHeaderConfirmed, @ParamsLoraHeaderAdr, @ParamsLoraHeaderAck, @ParamsLoraHeaderAdrAckReq, @ParamsLoraHeaderVersion, @ParamsLoraHeaderType, @ParamsPayload, @ParamsEncryptedPayload, @MetaNetwork, @MetaPacketHash, @MetaApplication, @MetaDeviceAddr, @MetaTime, @MetaDevice, @MetaPacketId, @MetaGateway, @Type, @ParamsRxTimeDateTime, @ParamsRadioGpsTimeDateTime, @ParamsRadioHardwareTmstDateTime, @ParamsRadioTimeDateTime, @MetaTimeDateTime, @PayloadId, @PayloadVolLiters, @PayloadTemp, @PayloadBatt, @PayloadAlarm)";
                 SqlCommand cmd = new SqlCommand(insert_query, conn);
 
                 cmd.Parameters.AddWithValue("@BlueMeteringMessageId", Guid.NewGuid());
@@ -529,6 +554,11 @@ namespace MQTTnet.GetLockApp.WinForm
                 cmd.Parameters.AddWithValue("@ParamsRadioHardwareTmstDateTime", paramsRadioHardwareTmstDateTime == null ? DBNull.Value : paramsRadioHardwareTmstDateTime);
                 cmd.Parameters.AddWithValue("@ParamsRadioTimeDateTime", paramsRadioTimeDateTime == null ? DBNull.Value : paramsRadioTimeDateTime);
                 cmd.Parameters.AddWithValue("@MetaTimeDateTime", metaTimeDateTime == null ? DBNull.Value : metaTimeDateTime);
+                cmd.Parameters.AddWithValue("@PayloadId", payloadId == null ? DBNull.Value : payloadId);
+                cmd.Parameters.AddWithValue("@PayloadVolLiters", payloadVolLiters == null ? DBNull.Value : payloadVolLiters);
+                cmd.Parameters.AddWithValue("@PayloadTemp", payloadTemp == null ? DBNull.Value : payloadTemp);
+                cmd.Parameters.AddWithValue("@PayloadBatt", payloadBatt == null ? DBNull.Value : payloadBatt);
+                cmd.Parameters.AddWithValue("@PayloadAlarm", payloadAlarm == null ? DBNull.Value : payloadAlarm);
 
                 cmd.ExecuteNonQuery();
 
