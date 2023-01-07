@@ -7,14 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="MQTTnet.BlueMeteringApp\**" />
+    <EmbeddedResource Remove="MQTTnet.BlueMeteringApp\**" />
+    <None Remove="MQTTnet.BlueMeteringApp\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MQTTnet" Version="3.0.16" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="3.0.16" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MQTTnet.BlueMeteringApp\" />
   </ItemGroup>
 
 </Project>
